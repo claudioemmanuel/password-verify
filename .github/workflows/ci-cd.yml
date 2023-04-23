@@ -16,14 +16,19 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
-      - name: Build Docker image
-        run: docker build -t go-api .
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.19
 
-      - name: Run Docker container
-        run: docker run --name go-api-container -d -p 8080:8080 go-api
+      # init and download dependencies
+      - name: Init and download dependencies
+        run: go mod init go-api && go mod download && go mod tidy
 
-      - name: Run tests in Docker container
-        run: docker exec -t go-api-container go test -v ./...
-
-      - name: Stop and remove Docker container
-        run: docker stop go-api-container && docker rm go-api-container
+      # build project
+      - name: Build project
+        run: go build -o main .
+      
+      # run tests
+      - name: Run tests
+        run: go test -v ./...
