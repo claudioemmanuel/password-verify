@@ -3,12 +3,11 @@ package tests
 import (
 	"testing"
 
-	"github.com/claudioemmanue/go-api/pkg/service"
-	"github.com/claudioemmanue/go-api/pkg/types"
+	"github.com/claudioemmanue/go-api/application/services"
+	domain "github.com/claudioemmanue/go-api/domain/entities"
 	"github.com/stretchr/testify/assert"
 )
 
-// TestValidatePassword is responsible for testing the password validation
 func TestValidatePassword(t *testing.T) {
 	t.Run("Should return false verify when password is not valid", testShouldReturnFalseVerifyWhenPasswordIsNotValid)
 	t.Run("Should return true verify when password is valid", testShouldReturnTrueVerifyWhenPasswordIsValid)
@@ -16,32 +15,27 @@ func TestValidatePassword(t *testing.T) {
 }
 
 func testShouldReturnFalseVerifyWhenPasswordIsNotValid(t *testing.T) {
-
-	// Create not valid payload to test
 	failPayload := createMockPayload(
 		"12345",
-		[]types.Rule{
+		[]domain.Rule{
 			{Rule: "minSize", Value: 8},
 			{Rule: "minSpecialChars", Value: 1},
 			{Rule: "noRepeted", Value: 0},
 		},
 	)
 
-	// Call the service to validate the password
-	response, err := service.ValidatePassword(failPayload)
+	validator := &services.PasswordValidator{}
+	response, err := validator.ValidatePassword(failPayload)
 
-	// Assert if the password is not valid
 	assert.NotEmpty(t, response.NoMatch)
 	assert.False(t, response.Verify)
 	assert.Nil(t, err)
 }
 
 func testShouldReturnTrueVerifyWhenPasswordIsValid(t *testing.T) {
-
-	// Create a valid payload to test
 	successPayload := createMockPayload(
 		"12345@abc",
-		[]types.Rule{
+		[]domain.Rule{
 			{Rule: "minSize", Value: 8},
 			{Rule: "minSpecialChars", Value: 1},
 			{Rule: "noRepeted", Value: 0},
@@ -49,39 +43,32 @@ func testShouldReturnTrueVerifyWhenPasswordIsValid(t *testing.T) {
 		},
 	)
 
-	// Call the service to validate the password
-	response, err := service.ValidatePassword(successPayload)
+	validator := &services.PasswordValidator{}
+	response, err := validator.ValidatePassword(successPayload)
 
-	// Assert if the password is valid
 	assert.Empty(t, response.NoMatch)
 	assert.True(t, response.Verify)
 	assert.Nil(t, err)
 }
 
 func testShouldReturnErrorWhenRuleIsNotValid(t *testing.T) {
-
-	// Create a valid payload to test
 	successPayload := createMockPayload(
 		"12345@abc",
-		[]types.Rule{
+		[]domain.Rule{
 			{Rule: "minSize", Value: 8},
 			{Rule: "invalidRule", Value: 1},
 		},
 	)
 
-	// Call the service to validate the password
-	_, err := service.ValidatePassword(successPayload)
+	validator := &services.PasswordValidator{}
+	_, err := validator.ValidatePassword(successPayload)
 
 	assert.NotNil(t, err)
 }
 
-func createMockPayload(password string, rules []types.Rule) types.Payload {
-
-	// Create a mock payload
-	var mockPayload types.Payload
-
-	mockPayload.Password = password
-	mockPayload.Rules = rules
-
-	return mockPayload
+func createMockPayload(password string, rules []domain.Rule) domain.UserInput {
+	return domain.UserInput{
+		Password: password,
+		Rules:    rules,
+	}
 }

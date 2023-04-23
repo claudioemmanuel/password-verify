@@ -1,93 +1,70 @@
+## Password Verify
 
-## Tecnologia
-#### `Back-end`
-- [Go](https://go.dev)
-#### Para executar a aplicação será necessário o [Docker](https://www.docker.com)
-#### Para os testes na API REST será necessário o [Insomnia](https://insomnia.rest/download)
+This repository contains a simple API REST to verify if a password is valid based on a set of rules. This project was developed for job test application.
 
-## Preparação do projeto
+## Features
 
-Clone o projeto
+- API REST
+- Unit tests
+- Docker
+
+## Requirements
+
+- Go 1.19
+- Docker
+- Docker Compose
+
+## Getting Started
+
+1. Clone the project
+
 ```bash
 $ git clone https://github.com/claudioemmanuel/password-verify.git
+cd password-verify
 ```
-Instalação do projeto
+
+2. Build and run the Docker container
+
 ```bash
 $ docker-compose up --build
 ```
-Se tudo correr bem, o projeto deverá estar rodando em **localhost:8080**
 
-## Testes
-Para execução dos testes unitários, após o projeto estar rodando, basta entrar com o comando  
+The API should now be running on `http://localhost:8080`.
+
+## Running Tests
+
+For Insomnia tests, import the **docs/payload.json** file or run the following command:
 
 ```bash
-$ go test ./pkg/tests
+go test -v ./...
 ```
-e você deverá ver um retorno como ```ok  command-line-arguments  0.221s``` indicando que todos os testes rodaram com sucesso.
 
-## Insomnia
-Para os testes há um payload de exemplo no diretório **docs/payload.json**
-Basta importá-lo no **Insomnia** para utilizar.
+## The problem
 
-## Endpoint
-### /verify ```POST``` 
+Given a continuous word, and a set of rules, the program needs to verify if the password is valid based on the rules requested. The possible rules are:
+`minSize`: have at least `X` characters,
+`minUppercase`: have at least `X` uppercase characters,
+`minLowercase`: have at least `X` lowercase characters,
+`minDigit`: have at least `X` digits (0-9),
+`minSpecialChars`: have at least `X` special characters. The special characters are: `!@#$%^&*()-+\/{}[]`,
+`noRepeted`: do not have any repeated character in sequence. Example: `aab` violates this condition, but `aba` does not.
 
-Requisição REST contendo a senha e uma lista de regra
-```bash
-{
-  "password": "TesteSenhaForte!123&",
-  "rules": [
-    {
-      "rule": "minSize",
-      "value": 8
-    },
-    {
-      "rule": "minSpecialChars",
-      "value": 2
-    },
-    {
-      "rule": "noRepeted",
-      "value": 0
-    },
-    {
-      "rule": "minDigit",
-      "value": 4
-    }
-  ]
-}
-```
-A resposta deverá retornar um mapa com duas chaves:
+## The solution
 
-```verify```: que deve retornar um ```boolean``` dizendo se a senha foi validada por todas as regras
+Based on the rules informed, an endpoint was developed to validate the password sent by the user.
 
-```noMatch```: que deve retornar uma lista de ```strings``` contendo quais as regras a senha não passou, caso a senha atenda todas as regras uma lista vazia será retornada. 
-#### Exemplo:
-```
-{
-  "verify": false,
-  "noMatch": [
-    "minDigit"
-  ]
-}
-```
-## Senha válida
+## License
 
-**Problema**: Dada uma palavra contínua, e um conjunto de regras, o programa precisa verificar se a senha é válida baseada nas regras pedidas. As regras possíveis são: 
-```minSize```: ter pelo menos ```X``` caracteres 
+This project is licensed under the MIT License - see the [MIT LICENSE](https://opensource.org/licenses/MIT) for details.
 
-```minUppercase```: ter pelo menos ```X``` caracteres maiúsculos
+## Acknowledgments
 
-```minLowercase```: ter pelo menos ```X``` caracteres minúsculos
+- [Golang](https://golang.org/)
+- [Gin](https://gin-gonic.com)
+- [Docker](https://www.docker.com/)
+- [Docker Compose](https://docs.docker.com/compose/)
+- [Insomnia](https://insomnia.rest/download)
 
-```minDigit```: ter pelo menos ```X``` dígitos (0-9)
+## Author
 
-```minSpecialChars```: ter pelo menos ```X``` caracteres especiais. Os caracteres especiais são: ```!@#$%^&*()-+\/{}[]```
-
-```noRepeted```: não tenha nenhum caractere repetido em sequência. Exemplo: ```aab``` viola esta condição, mas  ```aba``` não
-
-**Solução**: Baseado nas regras informadas foi desenvolvido um endpoint para validação da senha enviada pelo usuário.
-
-## 📙 Licença
-> Com base nos termos de [MIT LICENSE](https://opensource.org/licenses/MIT)
-
-##### Feito por Claudio Emmanuel com ❤️
+- [Claudio Emanuel](https://www.linkedin.com/in/claudio-emmanuel/) made with ❤️

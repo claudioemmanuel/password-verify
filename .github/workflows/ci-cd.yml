@@ -1,0 +1,29 @@
+name: Build and Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Build Docker image
+        run: docker build -t go-api .
+
+      - name: Run Docker container
+        run: docker run --name go-api-container -d -p 8080:8080 go-api
+
+      - name: Run tests in Docker container
+        run: docker exec -t go-api-container go test -v ./...
+
+      - name: Stop and remove Docker container
+        run: docker stop go-api-container && docker rm go-api-container

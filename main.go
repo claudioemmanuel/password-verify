@@ -1,10 +1,13 @@
 package main
 
-import "github.com/claudioemmanue/go-api/pkg/server"
+import (
+	adapter "github.com/claudioemmanue/go-api/adapter/api"
+	"github.com/claudioemmanue/go-api/application/services"
+)
 
 func main() {
+	validator := &services.PasswordValidator{}
+	router := adapter.SetupRoutes(validator)
 
-	// Create a new server
-	server := server.NewServer("8080")
-	server.Start()
+	router.Run(":8080")
 }
