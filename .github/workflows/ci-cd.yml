@@ -21,14 +21,14 @@ jobs:
         with:
           go-version: 1.19
 
-      # init and download dependencies
-      - name: Init and download dependencies
-        run: go mod init go-api && go mod download && go mod tidy
+      # Download and tidy dependencies
+      - name: Download and tidy dependencies
+        run: go mod download && go mod tidy
 
-      # build project
+      # Build project
       - name: Build project
         run: go build -o main .
       
-      # run tests
+      # Run tests
       - name: Run tests
         run: go test -v ./...
