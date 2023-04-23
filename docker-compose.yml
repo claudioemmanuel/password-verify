@@ -1,12 +1,13 @@
-version: '3'
+version: '3.9'
 
 services:
   go-app:
-    working_dir: /src/app
     build:
-      context: ./
-      dockerfile: docker/.dockerfile
+      context: .
+      dockerfile: .docker/Dockerfile
+    container_name: go-app
+    volumes:
+      - .:/src/app
+    working_dir: /src/app
     ports:
-      - "8080:8080"
-    expose:
-      - 8080
+      - 8080:8080
